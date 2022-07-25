@@ -33,7 +33,6 @@ func defaultIntermediateTemplate(name string) *x509.Certificate {
 		IsCA:                  true,
 		NotBefore:             notBefore,
 		NotAfter:              notBefore.Add(DefaultIntermediateCertValidity),
-		KeyUsage: x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment | x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
 		PolicyIdentifiers: []asn1.ObjectIdentifier{
 			[]int{2, 5, 29, 32, 0},			// All Issuance Policies
 			[]int{2, 23, 140, 1, 1},		// Certificate issued in compliance with the Extended Validation Guidelines (2.23.140.1.1)
@@ -42,7 +41,7 @@ func defaultIntermediateTemplate(name string) *x509.Certificate {
 			//[]int{2, 23, 140, 1, 2, 2},	// Certificate issued in compliance with the TLS Baseline Requirements – Organization identity asserted (2.23.140.1.2.2)
 			//[]int{2, 23, 140, 1, 2, 3},	// Certificate issued in compliance with the TLS Baseline Requirements – Individual identity asserted (2.23.140.1.2.3)
 		},
-		KeyUsage: x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
+		KeyUsage: x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment | x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
 		ExtKeyUsage: []x509.ExtKeyUsage{
 			x509.ExtKeyUsageServerAuth,
 			x509.ExtKeyUsageClientAuth,
