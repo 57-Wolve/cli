@@ -1,15 +1,16 @@
 # This is an example .goreleaser.yml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
-project_name: step-ca
+project_name: step
 
 before:
   hooks:
     # You may remove this if you don't use go modules.
     - go mod download
+    # - go generate ./...
 
 builds:
   -
-    id: step-ca
+    id: default
     env:
       - CGO_ENABLED=0
     targets:
@@ -22,11 +23,33 @@ builds:
       - linux_arm_5
       - linux_arm_6
       - linux_arm_7
+      - linux_mips
+      - linux_mips64
+      - linux_ppc64le
       - windows_amd64
+      - windows_arm64
     flags:
       - -trimpath
-    main: ./cmd/step-ca/main.go
-    binary: bin/step-ca
+    main: ./cmd/step/main.go
+    binary: bin/step
+    ldflags:
+      - -w -X main.Version={{.Version}} -X main.BuildTime={{.Date}}
+  -
+    # This build is specifically for nFPM targets (.deb and .rpm files).
+    # It's exactly the same as the default build above, except:
+    # - it only builds the archs we want to produce .deb and .rpm files for
+    # - the name of the output binary is step-cli
+    id: nfpm
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+    flags:
+      - -trimpath
+    main: ./cmd/step/main.go
+    binary: step-cli
     ldflags:
       - -w -X main.Version={{.Version}} -X main.BuildTime={{.Date}}
 
@@ -39,10 +62,55 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+    builds:
+      - default
     wrap_in_directory: "{{ .ProjectName }}_{{ .Version }}"
     files:
       - README.md
       - LICENSE
+      - autocomplete/*
+
+nfpms:
+  # Configure nFPM for .deb and .rpm releases
+  #
+  # See https://nfpm.goreleaser.com/configuration/
+  # and https://goreleaser.com/customization/nfpm/
+  #
+  # Useful tools for debugging .debs:
+  # List file contents: dpkg -c dist/step_...deb
+  # Package metadata: dpkg --info dist/step_....deb
+  #
+  -
+    builds:
+      - nfpm
+    package_name: step-cli
+    file_name_template: "{{ .PackageName }}_{{ .Version }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}"
+    vendor: Smallstep Labs
+    homepage: https://github.com/smallstep/cli
+    maintainer: Smallstep <techadmin@smallstep.com>
+    description: >
+      step-cli lets you build, operate, and automate Public Key Infrastructure (PKI) systems and workflows.
+      It's a swiss army knife for authenticated encryption (X.509, TLS), single sign-on (OAuth OIDC, SAML), multi-factor authentication (OATH OTP, FIDO U2F), encryption mechanisms (JSON Web Encryption, NaCl), and verifiable claims (JWT, SAML assertions).
+    license: Apache 2.0
+    section: utils
+    formats:
+      - deb
+      - rpm
+    priority: optional
+
+    bindir: /usr/bin
+    contents:
+      - src: debian/copyright
+        dst: /usr/share/doc/step-cli/copyright
+        # Ghost files are used for RPM and ignored elsewhere
+      - dst: /usr/bin/step
+        type: ghost
+      - dst: /usr/share/bash-completion/completions/step
+        type: ghost
+    scripts:
+      postinstall: scripts/postinstall.sh
+      postremove: scripts/postremove.sh
+
 
 source:
   enabled: true
@@ -53,12 +121,6 @@ checksum:
   extra_files:
     - glob: ./.releases/*
 
-#signs:
-#- cmd: cosign
-#  stdin: '{{ .Env.COSIGN_PWD }}'
-#  args: ["sign-blob", "-key=/tmp/cosign.key", "-output=${signature}", "${artifact}"]
-#  artifacts: all
-
 snapshot:
   name_template: "{{ .Tag }}-next"
 
@@ -68,10 +130,10 @@ release:
   # Note: it can only be one: either github, gitlab or gitea
   github:
     owner: 57-Wolve
-    name: certificates
+    name: cli
   draft: false
 scoop:
-  url_template: "https://github.com/57-Wolve/certificates/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+  url_template: "https://github.com/57-Wolve/cli/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
   # Git author used to commit to the repository.
   # Defaults are shown.
   commit_author:
