@@ -44,8 +44,20 @@ func defaultRootTemplate(cn string) *x509.Certificate {
 		IsCA:                  true,
 		NotBefore:             notBefore,
 		NotAfter:              notBefore.Add(DefaultRootCertValidity),
-		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageAny},
-		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
+		KeyUsage: x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment | x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
+		ExtKeyUsage: []x509.ExtKeyUsage{
+			x509.ExtKeyUsageAny,
+			x509.ExtKeyUsageServerAuth,
+			x509.ExtKeyUsageClientAuth,
+			x509.ExtKeyUsageCodeSigning,
+			x509.ExtKeyUsageEmailProtection,
+			x509.ExtKeyUsageTimeStamping,
+		},
+		UnknownExtKeyUsage: []asn1.ObjectIdentifier{
+			[]int{1, 3, 6, 1, 4, 1, 311, 20, 2, 2},    // Smart Card Logon (1.3.6.1.4.1.311.20.2.2)
+			[]int{1, 3, 6, 1, 4, 1, 311, 10, 3, 12},   // Document Signing (1.3.6.1.4.1.311.10.3.12)
+			[]int{1, 3, 6, 1, 4, 1, 311, 80, 1},       // Document Encryption (1.3.6.1.4.1.311.80.1)
+		},
 		BasicConstraintsValid: true,
 		MaxPathLen:            1,
 		MaxPathLenZero:        false,
