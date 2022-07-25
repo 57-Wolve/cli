@@ -70,48 +70,6 @@ archives:
       - LICENSE
       - autocomplete/*
 
-nfpms:
-  # Configure nFPM for .deb and .rpm releases
-  #
-  # See https://nfpm.goreleaser.com/configuration/
-  # and https://goreleaser.com/customization/nfpm/
-  #
-  # Useful tools for debugging .debs:
-  # List file contents: dpkg -c dist/step_...deb
-  # Package metadata: dpkg --info dist/step_....deb
-  #
-  -
-    builds:
-      - nfpm
-    package_name: step-cli
-    file_name_template: "{{ .PackageName }}_{{ .Version }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}"
-    vendor: Smallstep Labs
-    homepage: https://github.com/smallstep/cli
-    maintainer: Smallstep <techadmin@smallstep.com>
-    description: >
-      step-cli lets you build, operate, and automate Public Key Infrastructure (PKI) systems and workflows.
-      It's a swiss army knife for authenticated encryption (X.509, TLS), single sign-on (OAuth OIDC, SAML), multi-factor authentication (OATH OTP, FIDO U2F), encryption mechanisms (JSON Web Encryption, NaCl), and verifiable claims (JWT, SAML assertions).
-    license: Apache 2.0
-    section: utils
-    formats:
-      - deb
-      - rpm
-    priority: optional
-
-    bindir: /usr/bin
-    contents:
-      - src: debian/copyright
-        dst: /usr/share/doc/step-cli/copyright
-        # Ghost files are used for RPM and ignored elsewhere
-      - dst: /usr/bin/step
-        type: ghost
-      - dst: /usr/share/bash-completion/completions/step
-        type: ghost
-    scripts:
-      postinstall: scripts/postinstall.sh
-      postremove: scripts/postremove.sh
-
-
 source:
   enabled: true
   name_template: '{{ .ProjectName }}_{{ .Version }}'
