@@ -44,6 +44,7 @@ func defaultRootTemplate(cn string) *x509.Certificate {
 		IsCA:                  true,
 		NotBefore:             notBefore,
 		NotAfter:              notBefore.Add(DefaultRootCertValidity),
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageAny},
 		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
 		BasicConstraintsValid: true,
 		MaxPathLen:            1,

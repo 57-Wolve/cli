@@ -4,6 +4,7 @@ import (
 	"crypto"
 	"crypto/x509"
 	"crypto/x509/pkix"
+	"encoding/asn1"
 	"time"
 
 	"github.com/pkg/errors"
@@ -65,7 +66,7 @@ func NewLeafProfileWithCSR(csr *x509.CertificateRequest, iss *x509.Certificate, 
 	return newProfile(&Leaf{}, sub, iss, issPriv, withOps...)
 }
 
-func defaultLeafTemplate(sub pkix.Name, iss pkix.Name) *x509.Certificate {
+func defaultLeafTemplate(sub, iss pkix.Name) *x509.Certificate {
 	notBefore := time.Now()
 	return &x509.Certificate{
 		IsCA:      false,
@@ -78,6 +79,14 @@ func defaultLeafTemplate(sub pkix.Name, iss pkix.Name) *x509.Certificate {
 		ExtKeyUsage: []x509.ExtKeyUsage{
 			x509.ExtKeyUsageServerAuth,
 			x509.ExtKeyUsageClientAuth,
+			x509.ExtKeyUsageCodeSigning,
+			x509.ExtKeyUsageEmailProtection,
+			x509.ExtKeyUsageTimeStamping,
+		},
+		UnknownExtKeyUsage: []asn1.ObjectIdentifier{
+			[]int{1, 3, 6, 1, 4, 1, 311, 20, 2, 2},    // Smart Card Logon (1.3.6.1.4.1.311.20.2.2)
+			[]int{1, 3, 6, 1, 4, 1, 311, 10, 3, 12},   // Document Signing (1.3.6.1.4.1.311.10.3.12)
+			[]int{1, 3, 6, 1, 4, 1, 311, 80, 1},       // Document Encryption (1.3.6.1.4.1.311.80.1)
 		},
 		BasicConstraintsValid: false,
 		MaxPathLen:            0,

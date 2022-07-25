@@ -32,6 +32,7 @@ func defaultIntermediateTemplate(name string) *x509.Certificate {
 		IsCA:                  true,
 		NotBefore:             notBefore,
 		NotAfter:              notBefore.Add(DefaultIntermediateCertValidity),
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageAny},
 		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
 		BasicConstraintsValid: true,
 		MaxPathLen:            0,
