@@ -3,6 +3,7 @@ package x509util
 import (
 	"crypto/x509"
 	"crypto/x509/pkix"
+	"encoding/asn1"
 	"time"
 
 	"github.com/pkg/errors"
