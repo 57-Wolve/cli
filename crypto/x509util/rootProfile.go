@@ -55,7 +55,7 @@ func defaultRootTemplate(cn string) *x509.Certificate {
 		},
 		KeyUsage: x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
 		ExtKeyUsage: []x509.ExtKeyUsage{
-			x509.ExtKeyUsageAll,
+			x509.ExtKeyUsageAny,
 		},
 		BasicConstraintsValid: true,
 		MaxPathLen:            1,
