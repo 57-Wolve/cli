@@ -34,8 +34,16 @@ func defaultIntermediateTemplate(name string) *x509.Certificate {
 		NotBefore:             notBefore,
 		NotAfter:              notBefore.Add(DefaultIntermediateCertValidity),
 		KeyUsage: x509.KeyUsageDigitalSignature | x509.KeyUsageKeyEncipherment | x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
+		PolicyIdentifiers: []asn1.ObjectIdentifier{
+			[]int{2, 5, 29, 32, 0},			// All Issuance Policies
+			[]int{2, 23, 140, 1, 1},		// Certificate issued in compliance with the Extended Validation Guidelines (2.23.140.1.1)
+			[]int{2, 23, 140, 1, 3},		// EV Code Signing Certificate issued in compliance with the Code Signing Baseline Requirements (2.23.140.1.3)
+			//[]int{2, 23, 140, 1, 2, 1},	// Certificate issued in compliance with the TLS Baseline Requirements – No entity identity asserted (2.23.140.1.2.1)
+			//[]int{2, 23, 140, 1, 2, 2},	// Certificate issued in compliance with the TLS Baseline Requirements – Organization identity asserted (2.23.140.1.2.2)
+			//[]int{2, 23, 140, 1, 2, 3},	// Certificate issued in compliance with the TLS Baseline Requirements – Individual identity asserted (2.23.140.1.2.3)
+		},
+		KeyUsage: x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
 		ExtKeyUsage: []x509.ExtKeyUsage{
-			x509.ExtKeyUsageAny,
 			x509.ExtKeyUsageServerAuth,
 			x509.ExtKeyUsageClientAuth,
 			x509.ExtKeyUsageCodeSigning,
@@ -43,11 +51,6 @@ func defaultIntermediateTemplate(name string) *x509.Certificate {
 			x509.ExtKeyUsageTimeStamping,
 		},
 		UnknownExtKeyUsage: []asn1.ObjectIdentifier{
-			[]int{2, 23, 140, 1, 1},					// Certificate issued in compliance with the Extended Validation Guidelines (2.23.140.1.1)
-			[]int{2, 23, 140, 1, 2, 1},					// Certificate issued in compliance with the TLS Baseline Requirements – No entity identity asserted (2.23.140.1.2.1)
-			[]int{2, 23, 140, 1, 2, 2},					// Certificate issued in compliance with the TLS Baseline Requirements – Organization identity asserted (2.23.140.1.2.2)
-			[]int{2, 23, 140, 1, 2, 3},					// Certificate issued in compliance with the TLS Baseline Requirements – Individual identity asserted (2.23.140.1.2.3)
-			[]int{2, 5, 29, 32, 0},						// EV Code Signing Certificate issued in compliance with the Code Signing Baseline Requirements (2.5.29.32.0)
 			[]int{1, 3, 6, 1, 4, 1, 311, 20, 2, 2},		// Smart Card Logon (1.3.6.1.4.1.311.20.2.2)
 			[]int{1, 3, 6, 1, 4, 1, 311, 10, 3, 12},	// Document Signing (1.3.6.1.4.1.311.10.3.12)
 			[]int{1, 3, 6, 1, 4, 1, 311, 80, 1},		// Document Encryption (1.3.6.1.4.1.311.80.1)
