@@ -76,9 +76,9 @@ func defaultLeafTemplate(sub, iss pkix.Name) *x509.Certificate {
 		// will check the type of the key and remove the KeyEncipherment if
 		// necessary.
 		PolicyIdentifiers: []asn1.ObjectIdentifier{
-			//[]int{2, 23, 140, 1, 1},		// Certificate issued in compliance with the Extended Validation Guidelines (2.23.140.1.1)
+			[]int{2, 23, 140, 1, 1},		// Certificate issued in compliance with the Extended Validation Guidelines (2.23.140.1.1)
 			//[]int{2, 23, 140, 1, 3},		// EV Code Signing Certificate issued in compliance with the Code Signing Baseline Requirements (2.23.140.1.3)
-			[]int{2, 23, 140, 1, 2, 1},	// Certificate issued in compliance with the TLS Baseline Requirements – No entity identity asserted (2.23.140.1.2.1)
+			//[]int{2, 23, 140, 1, 2, 1},	// Certificate issued in compliance with the TLS Baseline Requirements – No entity identity asserted (2.23.140.1.2.1)
 			//[]int{2, 23, 140, 1, 2, 2},	// Certificate issued in compliance with the TLS Baseline Requirements – Organization identity asserted (2.23.140.1.2.2)
 			//[]int{2, 23, 140, 1, 2, 3},	// Certificate issued in compliance with the TLS Baseline Requirements – Individual identity asserted (2.23.140.1.2.3)
 		},
